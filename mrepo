@@ -735,7 +735,7 @@ class Repo:
                 elif s in ('you', ):
                     mirroryouget(url, self.srcdir, self.dist)
                 elif s in ('reposync', 'reposyncs'):
-                    mirrorreposync(url, self.srcdir, '%s-%s' % (self.dist.nick, self.name))
+                    mirrorreposync(url, self.srcdir, '%s-%s' % (self.dist.nick, self.name), self.dist)
                 else:
                     error(2, 'Scheme %s:// not implemented yet (in %s)' % (s, url))
             except mrepoMirrorException, e:
@@ -1507,7 +1507,7 @@ def mirroryouget(url, path, dist):
         raise(mrepoMirrorException('Failed with return code: %s' % ret))
 
 
-def mirrorreposync(url, path, reponame):
+def mirrorreposync(url, path, reponame, dist):
     "Mirror everything from a reposync:// URL"
     if not cf.cmd['reposync']:
         error(1, 'reposync was not found. reposync support is therefore disabled.')
@@ -1534,6 +1534,16 @@ baseurl=%s
 enabled=1
 """ % (reponame, reponame, url)
 
+    if dist.sslcert:
+        reposync_conf_contents = reposync_conf_contents + """
+sslclientcert=%s""" % (dist.sslcert) 
+    if dist.sslkey:
+        reposync_conf_contents = reposync_conf_contents + """
+sslclientkey=%s""" % (dist.sslkey) 
+    if dist.sslca:
+        reposync_conf_contents = reposync_conf_contents + """
+sslcacert=%s""" % (dist.sslca) 
+    
     (fd, reposync_conf_file) = tempfile.mkstemp(text=True)
     handle = os.fdopen(fd, 'w')
     handle.writelines(reposync_conf_contents)

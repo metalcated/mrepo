@@ -39,7 +39,7 @@ import urlparse
 __version__ = "$Revision$"
 # $Source$
 
-VERSION = '0.8.7'
+VERSION = "0.8.8"
 
 archs = {
     'alpha': ('alpha', 'alphaev5', 'alphaev56', 'alphaev6', 'alphaev67'),
